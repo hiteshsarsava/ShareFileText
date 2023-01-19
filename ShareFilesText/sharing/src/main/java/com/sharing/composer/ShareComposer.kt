@@ -163,4 +163,57 @@ class ShareComposer(private val context: Context?) {
         }
         shareFile(title, uris)
     }
+
+    /**
+     * To share the text with other apps via intent sharing
+     *
+     * @param title : Title of the share.
+     * @param text  : Actual text to share with app
+     */
+    fun shareTextWithFile(
+        title: String,
+        text: String,
+        textMimeType: TextMimeType,
+        pathsOfFiles: Array<String?>
+    ) {
+        val builder = IntentBuilder(context!!)
+            .setChooserTitle(title)
+        if (textMimeType === TextMimeType.HTML) {
+            builder.setHtmlText(text)
+        } else {
+            builder.setText(text)
+        }
+        if (pathsOfFiles.isNotEmpty()) {
+            val uris = arrayOfNulls<Uri>(pathsOfFiles.size)
+            for (i in pathsOfFiles.indices) {
+                uris[i] = Uri.parse(pathsOfFiles[i])
+            }
+            for (uri in uris) {
+                val cacheFile = File(uri!!.path)
+                val newUri = FileProvider.getUriForFile(
+                    context,
+                    context.packageName + ".provider",
+                    cacheFile
+                )
+                builder.addStream(newUri)
+                var mimeType = context.contentResolver.getType(newUri)
+                if (mimeType == null) {
+                    mimeType = ImageMimeType.JPEG.mimeType
+                }
+                builder.setType(mimeType)
+            }
+            val intent = builder.createChooserIntent().putExtra(Intent.EXTRA_TEXT, text)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            //                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            try {
+                context.startActivity(intent)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            builder.setType(textMimeType.mimeType)
+            builder.startChooser()
+        }
+    }
 }
