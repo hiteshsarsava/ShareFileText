@@ -25,16 +25,30 @@ Share reader :
 
 ## how install or integrate in project
 
-1. Copy paste the “sharing” folder in the Project folder.
-2. Add below lines in dependencies section in app level build.gradle file
-   ```api project(':sharing')```
+1. Add the JitPack repository to your build file. Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
 
-3. Add  below lines in settings.gradle file.
-   ```include ':sharing'```
+2. Add the dependency
+```
+dependencies {
+	        implementation 'com.github.hiteshsarsava:ShareFileText:lastestVersion'
+	}
+```
 
-4. Now sync the project or build the project.
+latestVersion : [![](https://jitpack.io/v/hiteshsarsava/ShareFileText.svg)](https://jitpack.io/#hiteshsarsava/ShareFileText)
 
-5. Copy paste below code of intent-filter for reading data in AndroidManifest.xml file. Add this in which Activity you want to read the data.
+3. Now sync the project or build the project.
+
+## Optional steps
+
+1. Copy paste below code of intent-filter for reading data in AndroidManifest.xml file. Add this in which Activity you want to read the data.
    For example, Below we want to read data in ShareHandlerActivity file.
 
  ```
@@ -56,7 +70,7 @@ Share reader :
 
 Note : 
 
-6. Copy paste the xml folder from sharing folder to project's res folder.
+2. Copy paste the xml folder from sharing folder to project's res folder.
    sharing -> res -> xml TO app -> res
 
 Note : 1. In the provider_paths.xml file added required paths. If your project required more configured paths then add in this file.
